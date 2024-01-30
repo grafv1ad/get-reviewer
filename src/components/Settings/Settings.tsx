@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 
 interface SettingsItemProps {
     name: string,
@@ -23,12 +23,33 @@ const SettingsItem: FunctionComponent<SettingsItemProps> = ({name, label}) => {
     );
 }
 
-const Settings = () => {
+interface ToggleSettingsButtonProps {
+    visibility: boolean,
+    setVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
+const ToggleSettingsButton: FunctionComponent<ToggleSettingsButtonProps> = ({ visibility, setVisibility }) => {
     return (
-        <div className="setting">
-            <SettingsItem name="login" label="Login" />
-            <SettingsItem name="repo" label="Repository name" />
-            <SettingsItem name="blacklist" label="Users blacklist" />
+        <button 
+            className="settings__toggle-button"
+            onClick={() => setVisibility(!visibility)}
+        >
+            Toggle settings
+        </button>
+    );
+};
+
+const Settings = () => {
+    const [visibility, setVisibility] = useState(true);
+
+    return (
+        <div className={visibility ? 'settings settings_active' : 'settings'}>
+            <div className="settings__list">
+                <SettingsItem name="login" label="Login" />
+                <SettingsItem name="repo" label="Repository name" />
+                <SettingsItem name="blacklist" label="Users blacklist" />
+            </div>
+            <ToggleSettingsButton visibility={visibility} setVisibility={setVisibility} />
         </div>
     );
 }

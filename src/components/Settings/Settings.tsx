@@ -37,7 +37,22 @@ const ToggleSettingsButton: FunctionComponent<ToggleSettingsButtonProps> = ({ vi
             Toggle settings
         </button>
     );
-};
+}
+
+const settingsList = [
+    {
+        name: 'login',
+        label: 'Login',
+    },
+    {
+        name: 'repo',
+        label: 'Repository name',
+    },
+    {
+        name: 'blacklist',
+        label: 'Users blacklist',
+    },
+];
 
 const Settings = () => {
     const [visibility, setVisibility] = useState(true);
@@ -45,9 +60,7 @@ const Settings = () => {
     return (
         <div className={visibility ? 'settings settings_active' : 'settings'}>
             <div className="settings__list">
-                <SettingsItem name="login" label="Login" />
-                <SettingsItem name="repo" label="Repository name" />
-                <SettingsItem name="blacklist" label="Users blacklist" />
+                {settingsList.map((item) => <SettingsItem key={item.name} name={item.name} label={item.label} />)}
             </div>
             <ToggleSettingsButton visibility={visibility} setVisibility={setVisibility} />
         </div>

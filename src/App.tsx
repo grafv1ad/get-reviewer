@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import Settings from './components/Settings/Settings';
-import GetResultButton from './components/GetResultButton/GetResultButton';
+import IResult from './components/Result/ResultInterface';
 import Result from './components/Result/Result';
 
 const App = () => {
+  const [result, setResult]: [IResult[] | undefined, React.Dispatch<React.SetStateAction<IResult[] | undefined>>] = useState();
+
   return(
     <main className='main'>
       <Settings />
-      <GetResultButton />
-      <Result />
+      <Result result={result} setResult={setResult} />
     </main>
   );
 }

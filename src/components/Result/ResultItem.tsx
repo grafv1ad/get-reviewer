@@ -7,7 +7,9 @@ interface ResultItemProps {
 
 const ResultItem: React.FC<ResultItemProps> = ({data}) => {
     return (
-        <a href={data.html_url}>{data.login}</a>
+        <li>
+            <a href={data.html_url}>{data.login}</a>
+        </li>
     );
 }
 

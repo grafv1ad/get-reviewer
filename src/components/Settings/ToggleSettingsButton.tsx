@@ -11,7 +11,7 @@ const ToggleSettingsButton: React.FC<ToggleSettingsButtonProps> = ({visibility, 
             className="settings__toggle-button"
             onClick={() => setVisibility(!visibility)}
         >
-            Toggle settings
+            {visibility ? 'Hide' : 'Show' }&nbsp;settings
         </button>
     );
 }

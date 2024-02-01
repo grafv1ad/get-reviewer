@@ -1,24 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import octokit from '../Octokit/Octokit';
+import ISettings from '../Settings/SettingsInterface';
 import IResult from './ResultInterface';
 import ResultItem from './ResultItem';
 import GetResultButton from './GetResultButton';
 
 interface ResultProps {
-    result: IResult[] | undefined,
-    setResult: React.Dispatch<React.SetStateAction<IResult[] | undefined>>,
+    settings: ISettings | undefined,
 }
 
-const Result: React.FC<ResultProps> = ({ result, setResult }) => {
+const Result: React.FC<ResultProps> = ({settings}) => {
+    const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false);
+    const [result, setResult]: [IResult[] | undefined, React.Dispatch<React.SetStateAction<IResult[] | undefined>>] = useState();
+
+    const updateResult = (result: IResult[]) => {
+        setResult(result);
+        setLoading(false);
+    }
+
     const getResult = async () => {
         await octokit.request('GET /repos/{owner}/{repo}/contributors', {
-            owner: 'grafv1ad',
-            repo: 'php-site-parser',
+            owner: settings!.login,
+            repo: settings!.repo,
             headers: {
-                'X-GitHub-Api-Version': '2022-11-28'
-            }
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
         }).then(response => {
-            return setResult(response.data);
+            let result = response.data;
+            const blacklist = settings!.blacklist.split(/\s*,\s*/);
+            if (blacklist.length > 0) {
+                result = result.filter(item => {
+                    // todo: remove temp
+                    const temp = item.login || '';
+                    return !blacklist.includes(temp)
+                });
+            }
+            console.log(blacklist);
+            console.log(result);
+            updateResult(result);
         });
     }
 
@@ -29,15 +48,19 @@ const Result: React.FC<ResultProps> = ({ result, setResult }) => {
         ));
     }
 
-    console.log(result)
     return (
         <>
-            <GetResultButton getResult={getResult} />
+            <GetResultButton setLoading={setLoading} getResult={getResult} />
             <div className="result">
-                <div className="result__title">Reviewers for this repository:</div>
-                <ul className="result__list">
-                    {resultList}
-                </ul>
+                {loading && 'Loading...'}
+                {!loading && resultList && 
+                    <>
+                        <div className="result__title">Reviewers for this repository:</div>
+                        <ul className="result__list">
+                            {resultList}
+                        </ul>
+                    </>
+                }
             </div>
         </>
     );

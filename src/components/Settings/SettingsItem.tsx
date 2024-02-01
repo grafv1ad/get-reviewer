@@ -4,13 +4,10 @@ interface SettingsItemProps {
     name: string,
     label: string,
     placeholder: string,
+    updateSettings: Function,
 }
 
-const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder}) => {
-    const updateSettings = () => {
-        console.log('success')
-    }
-
+const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder, updateSettings}) => {
     return (
         <div className="settings__item">
             <label htmlFor={name} className="settings__item-label">{label}</label>
@@ -19,7 +16,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder}) =
                 name={name} 
                 className="settings__item-input" 
                 placeholder={placeholder}
-                onChange={updateSettings}
+                onChange={(event) => updateSettings(name, event.target.value)}
             />
         </div>
     );

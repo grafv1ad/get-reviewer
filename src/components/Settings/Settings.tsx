@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
 import ToggleSettingsButton from './ToggleSettingsButton';
 
@@ -20,8 +21,23 @@ const settingsList = [
     },
 ];
 
-const Settings = () => {
+interface SettingsProps {
+    settings: ISettings,
+    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
+}
+
+const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     const [visibility, setVisibility] = useState(true);
+
+    const updateSettings = (name: string, value: string) => {
+        name = name.trim();
+        value = value.trim();
+        
+        setSettings({ 
+            ...settings, 
+            [name]: value,
+        });
+    }
 
     return (
         <div className="settings">
@@ -33,6 +49,7 @@ const Settings = () => {
                             name={item.name} 
                             label={item.label} 
                             placeholder={item.placeholder} 
+                            updateSettings={updateSettings}
                         />
                     ))}
                 </div>

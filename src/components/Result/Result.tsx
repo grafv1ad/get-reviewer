@@ -8,6 +8,7 @@ import { ErrorContext } from '../Error/ErrorContext';
 
 interface ResultProps {
     settings: ISettings,
+    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
 }
 
 interface IResultState {
@@ -16,7 +17,7 @@ interface IResultState {
     contributors: IResultItem[],
 }
 
-const Result: React.FC<ResultProps> = ({ settings }) => {
+const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<IResultState | null>(null);
     const { setError }: any = useContext(ErrorContext);
@@ -68,6 +69,12 @@ const Result: React.FC<ResultProps> = ({ settings }) => {
     const getResult = async () => {
         setResult(null);
 
+        setSettings({
+            login: settings.login.trim(),
+            repo: settings.repo.trim(),
+            blacklist: settings.blacklist.trim(),
+        });
+
         if (!settings.login) {
             throw new Error('Enter login, please');
         }
@@ -91,7 +98,7 @@ const Result: React.FC<ResultProps> = ({ settings }) => {
         }
 
         if (!currentUser) {
-            throw new Error('Сannot find the current user, please try again');
+            throw new Error('Сannot find the user, please try again');
         }
 
         let data: IResultItem[] = [];

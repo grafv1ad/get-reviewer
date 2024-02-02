@@ -6,7 +6,7 @@ import Error from './components/Error/Error';
 import { ErrorContextProvider } from './components/Error/ErrorContext';
 
 const App = () => {
-  const [settings, setSettings]: [ISettings, React.Dispatch<React.SetStateAction<ISettings>>] = useState({
+  const [settings, setSettings] = useState<ISettings>({
     login: '',
     repo: '',
     blacklist: '',
@@ -16,7 +16,7 @@ const App = () => {
     <main className='main'>
       <ErrorContextProvider>
         <Settings settings={settings} setSettings={setSettings} />
-        <Result settings={settings} />
+        <Result settings={settings} setSettings={setSettings} />
         <Error />
       </ErrorContextProvider>
     </main>

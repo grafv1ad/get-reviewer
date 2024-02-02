@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
 import ToggleSettingsButton from './ToggleSettingsButton';
@@ -30,9 +30,6 @@ const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     const [visibility, setVisibility] = useState(true);
 
     const updateSettings = (name: string, value: string) => {
-        name = name.trim();
-        value = value.trim();
-        
         setSettings({ 
             ...settings, 
             [name]: value,

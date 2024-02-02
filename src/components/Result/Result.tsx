@@ -55,7 +55,7 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
             }
 
             const linkHeader: string = response.headers.link || '';
-            pagesRemaining = !!(linkHeader && linkHeader.includes(`rel=\"next\"`));
+            pagesRemaining = !!(linkHeader && linkHeader.includes(`rel="next"`));
 
             if (pagesRemaining) {
                 // @ts-ignore - объект не будет пустым, так как мы прошли проверку выше

@@ -8,7 +8,7 @@ interface GetResultButtonProps {
 }
 
 const GetResultButton: React.FC<GetResultButtonProps> = ({loading, setLoading, getResult}) => {
-    const {error, setError}: any = useContext(ErrorContext);
+    const {setError}: any = useContext(ErrorContext);
 
     const onClick = async () => {
         setError(null);

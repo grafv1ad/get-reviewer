@@ -16,8 +16,8 @@ const App = () => {
     <main className='main'>
       <ErrorContextProvider>
         <Settings settings={settings} setSettings={setSettings} />
-        <Error />
         <Result settings={settings} />
+        <Error />
       </ErrorContextProvider>
     </main>
   );

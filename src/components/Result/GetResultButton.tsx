@@ -10,6 +10,7 @@ const GetResultButton: React.FC<GetResultButtonProps> = ({setLoading, getResult}
     const {error, setError}: any = useContext(ErrorContext);
 
     const onClick = async () => {
+        setError(null);
         setLoading(true);
         try {
             await getResult();

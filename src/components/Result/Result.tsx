@@ -11,7 +11,7 @@ interface ResultProps {
 }
 
 interface IResultState {
-    you: IResultItem | null,
+    currentUser: IResultItem | null,
     reviewer: IResultItem | null,
     contributors: IResultItem[],
 }
@@ -21,10 +21,48 @@ const Result: React.FC<ResultProps> = ({ settings }) => {
     const [result, setResult] = useState<IResultState | null>(null);
     const { setError }: any = useContext(ErrorContext);
 
-    const updateResult = (you: IResultItem | null, reviewer: IResultItem | null, contributors: IResultItem[]) => {
+    const updateResult = (currentUser: IResultItem | null, reviewer: IResultItem | null, contributors: IResultItem[]) => {
         setError(null);
-        setResult({you, reviewer, contributors});
+        setResult({currentUser, reviewer, contributors});
         setLoading(false);
+    }
+
+    interface IGetDataOptions {
+        owner?: string,
+        repo?: string,
+        username?: string,
+        per_page?: number,
+    }
+
+    const getData = async (url: string, options: IGetDataOptions) => {
+        const nextPattern = /(?<=<)([\S]*)(?=>; rel="Next")/i;
+        let pagesRemaining: boolean = true;
+        let data: IResultItem[] = [];
+
+        while (pagesRemaining) {
+            const response = await octokit.request(`GET ${url}`, {
+                ...options,
+                headers: {
+                    'X-GitHub-Api-Version': '2022-11-28',
+                },
+            });
+
+            if (Array.isArray(response.data)) {
+                data = [...data, ...response.data];
+            } else {
+                data = [...data, response.data];
+            }
+
+            const linkHeader: string = response.headers.link || '';
+            pagesRemaining = !!(linkHeader && linkHeader.includes(`rel=\"next\"`));
+
+            if (pagesRemaining) {
+                // @ts-ignore - объект не будет пустым, так как мы прошли проверку выше
+                url = linkHeader.match(nextPattern)[0];
+            }
+        }
+
+        return data;
     }
 
     const getResult = async () => {
@@ -38,48 +76,59 @@ const Result: React.FC<ResultProps> = ({ settings }) => {
             throw new Error('Enter repository name, please');
         }
 
-        await octokit.request('GET /repos/{owner}/{repo}/contributors', {
-            owner: settings.login,
-            repo: settings.repo,
-            headers: {
-                'X-GitHub-Api-Version': '2022-11-28',
-            },
-        })
-            .then(response => {
-                let contributors: IResultItem[] = response.data;
-                let you: IResultItem | null = null; 
-                let reviewer: IResultItem | null = null;
-
-                const blacklist = (settings.blacklist.length > 0) ? settings.blacklist.split(/\s*,\s*/) : [];
-
-                contributors = contributors.filter(item => {
-                    if (!item.login) return;
-
-                    if (item.login === settings.login) {
-                        you = item; 
-                        return false;
-                    }
-
-                    return !blacklist.includes(item.login);
-                });
-
-                if (contributors.length > 0) {
-                    reviewer = contributors[Math.floor(Math.random() * contributors.length)];
-                }
-
-                contributors = contributors.filter(item => item.login !== reviewer!.login);
-
-                updateResult(you, reviewer, contributors);
-            })
-            .catch(error => {
-                setLoading(false);
-                setError(error);
+        let currentUser: IResultItem | null = null; 
+        try {
+            const user = await getData(`/users/{username}`, {
+                username: settings.login,
+                per_page: 1,
             });
+
+            if (user && user[0]) {
+                currentUser = user[0];
+            }
+        } catch (error) {
+            console.debug(error);
+        }
+
+        if (!currentUser) {
+            throw new Error('Сannot find the current user, please try again');
+        }
+
+        let data: IResultItem[] = [];
+        try {
+            data = await getData('/repos/{owner}/{repo}/contributors', {
+                owner: settings.login,
+                repo: settings.repo,
+                per_page: 100,
+            });
+        } catch (error) {
+            console.debug(error);
+            setLoading(false);
+            throw new Error('Сannot find the repository, please try again');
+        } 
+
+        let contributors: IResultItem[] = data;
+        let reviewer: IResultItem | null = null;
+        const blacklist = (settings.blacklist.length > 0) ? settings.blacklist.split(/\s*,\s*/) : [];
+
+        contributors = contributors.filter(item => {
+            if (!item.login) return false;
+            if (item.login === currentUser!.login) return false;
+            return !blacklist.includes(item.login);
+        });
+
+        if (contributors.length > 0) {
+            const randomIndex = Math.floor(Math.random() * contributors.length);
+            reviewer = contributors[randomIndex];
+            contributors.splice(randomIndex, 1);
+        }
+        
+        updateResult(currentUser, reviewer, contributors);
     }
 
-    let resultList;
+    let contributorsList;
     if (result?.contributors && result.contributors.length > 0) {
-        resultList = result.contributors.map((item, index) => (
+        contributorsList = result.contributors.map((item, index) => (
             <ResultItem key={index} data={item} />
         ));
     }
@@ -91,32 +140,32 @@ const Result: React.FC<ResultProps> = ({ settings }) => {
                 {loading &&
                     <div className="result__loading">Loading...</div>
                 }
-                {!loading &&
+                {!loading && result &&
                     <>
                         <div className="result__item">
                             <div className="result__title">You</div>
-                            {result?.you &&
+                            {result.currentUser &&
                                 <ul className="result__list">
-                                    <ResultItem data={result.you} />
+                                    <ResultItem data={result.currentUser} />
                                 </ul>
                             }
                         </div>
                         <div className="result__item">
                             <div className="result__title">Your reviewer</div>
-                            {result?.reviewer &&
+                            {result.reviewer &&
                                 <ul className="result__list">
                                     <ResultItem data={result.reviewer} />
                                 </ul>
                             }
-                            {!result?.reviewer &&
+                            {!result.reviewer &&
                                 <div className="result__error">No contributor found, please try to change the blacklist</div>
                             }
                         </div>
-                        {resultList && 
+                        {contributorsList && 
                             <div className="result__item">
                                 <div className="result__title">Other contributors <i>(except for the blacklist)</i></div>
                                 <ul className="result__list">
-                                    {resultList}
+                                    {contributorsList}
                                 </ul>
                             </div>
                         }

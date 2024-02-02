@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
 import ToggleSettingsButton from './ToggleSettingsButton';
+import { ErrorContext } from '../Error/ErrorContext';
 import { localStorageSetItem } from '../LocalStorage/LocalStorageContext';
 
 const settingsList = [
@@ -29,8 +30,10 @@ interface SettingsProps {
 
 const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     const [visibility, setVisibility] = useState(true);
+    const { setError }: any = useContext(ErrorContext);
 
     const updateSettings = (name: string, value: string) => {
+        setError(null);
         localStorageSetItem(name, value);
         setSettings(settings => {
             return {
@@ -43,7 +46,7 @@ const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     return (
         <div className="settings">
             {visibility &&
-                <div className="settings__list">
+                <div className="flex flex-col gap-3 mb-4">
                     {settingsList.map((item) => (
                         <SettingsItem 
                             key={item.name} 

@@ -143,24 +143,24 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
     return (
         <>
             <GetResultButton loading={loading} setLoading={setLoading} getResult={getResult} />
-            <div className="result">
+            <div className="flex flex-col gap-4 text-lg empty:hidden">
                 {loading &&
-                    <div className="result__loading">Loading...</div>
+                    <div className="text-neutral-600">Loading...</div>
                 }
                 {!loading && result &&
                     <>
                         <div className="result__item">
-                            <div className="result__title">You</div>
+                            <div className="text-lg text-sky-800 mb-2">You</div>
                             {result.currentUser &&
-                                <ul className="result__list">
+                                <ul className="flex flex-col gap-4">
                                     <ResultItem data={result.currentUser} />
                                 </ul>
                             }
                         </div>
                         <div className="result__item">
-                            <div className="result__title">Your reviewer</div>
+                            <div className="text-lg text-sky-800 mb-2">Your reviewer</div>
                             {result.reviewer &&
-                                <ul className="result__list">
+                                <ul className="flex flex-col gap-4">
                                     <ResultItem data={result.reviewer} />
                                 </ul>
                             }
@@ -170,8 +170,8 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
                         </div>
                         {contributorsList && 
                             <div className="result__item">
-                                <div className="result__title">Other contributors <i>(except for the blacklist)</i></div>
-                                <ul className="result__list">
+                                <div className="text-lg text-sky-800 mb-2">Other contributors <i className="text-sm">(except for the blacklist)</i></div>
+                                <ul className="flex flex-col gap-4">
                                     {contributorsList}
                                 </ul>
                             </div>

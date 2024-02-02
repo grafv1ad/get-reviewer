@@ -7,7 +7,7 @@ const Error = () => {
     return (
         <>
             {error?.name &&
-                <div className="error">
+                <div className="text-red-800 font-semibold text-lg">
                     {error.message || 'Unknown error, please try again'}
                 </div>
             }

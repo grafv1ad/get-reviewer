@@ -23,7 +23,7 @@ const GetResultButton: React.FC<GetResultButtonProps> = ({loading, setLoading, g
 
     return (
         <button 
-            className="get-result-button"
+            className="py-2 px-4 border border-sky-600 transition-all hover:bg-sky-600 hover:text-white disabled:opacity-50 disabled:bg-sky-600 disabled:text-white"
             onClick={onClick}
             disabled={loading}
         >

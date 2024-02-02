@@ -7,13 +7,13 @@ interface ResultItemProps {
 
 const ResultItem: React.FC<ResultItemProps> = ({data}) => {
     return (
-        <li>
-            <a href={data.html_url}>
+        <li className="border p-1 transition-all hover:border-sky-800 hover:text-sky-800">
+            <a href={data.html_url} className="cursor-pointer flex gap-8 items-center">
                 <img src={data.avatar_url} alt={data.login} style={{
-                    width: '50px',
-                    height: '50px',
+                    width: '75px',
+                    height: '75px',
                 }}/>
-                <span>{data.login}</span>
+                <span className="transition-all">{data.login}</span>
             </a>
         </li>
     );

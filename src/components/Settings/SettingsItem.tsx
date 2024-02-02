@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import ISettings from './SettingsInterface';
 import { localStorageGetItem } from '../LocalStorage/LocalStorageContext';
-
 
 interface SettingsItemProps {
     name: string,
@@ -13,20 +12,19 @@ interface SettingsItemProps {
 
 const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder, settings, updateSettings}) => {
     const value = localStorageGetItem(name) || settings[name];
-
     useEffect(() => {
         updateSettings(name, value)
     }, []);
 
     return (
-        <div className="settings__item">
-            <label htmlFor={name} className="settings__item-label">{label}</label>
+        <div className="flex flex-col gap-1">
+            <label htmlFor={name} className="cursor-pointer text-sm text-sky-800">{label}</label>
             <input type="text" 
                 id={name} 
                 name={name} 
                 value={value}
                 placeholder={placeholder}
-                className="settings__item-input" 
+                className="py-2 px-4 border" 
                 onChange={(event) => updateSettings(name, event.target.value)}
             />
         </div>

@@ -13,7 +13,7 @@ const App = () => {
   });
 
   return(
-    <main className='main'>
+    <main className="container mx-auto max-w-2xl px-8 py-8 flex flex-col gap-8">
       <ErrorContextProvider>
         <Settings settings={settings} setSettings={setSettings} />
         <Result settings={settings} setSettings={setSettings} />

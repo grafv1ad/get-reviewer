@@ -2,11 +2,12 @@ import React, { useContext } from 'react';
 import { ErrorContext } from '../Error/ErrorContext';
 
 interface GetResultButtonProps {
+    loading: boolean,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     getResult: Function,
 }
 
-const GetResultButton: React.FC<GetResultButtonProps> = ({setLoading, getResult}) => {
+const GetResultButton: React.FC<GetResultButtonProps> = ({loading, setLoading, getResult}) => {
     const {error, setError}: any = useContext(ErrorContext);
 
     const onClick = async () => {
@@ -24,6 +25,7 @@ const GetResultButton: React.FC<GetResultButtonProps> = ({setLoading, getResult}
         <button 
             className="get-result-button"
             onClick={onClick}
+            disabled={loading}
         >
             Get reviewer
         </button>

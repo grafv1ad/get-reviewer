@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
 import ToggleSettingsButton from './ToggleSettingsButton';
+import { localStorageSetItem } from '../LocalStorage/LocalStorageContext';
 
 const settingsList = [
     {
@@ -30,9 +31,12 @@ const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     const [visibility, setVisibility] = useState(true);
 
     const updateSettings = (name: string, value: string) => {
-        setSettings({ 
-            ...settings, 
-            [name]: value,
+        localStorageSetItem(name, value);
+        setSettings(settings => {
+            return {
+                ...settings, 
+                [name]: value,
+            } 
         });
     }
 

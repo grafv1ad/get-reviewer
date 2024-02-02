@@ -142,7 +142,7 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
 
     return (
         <>
-            <GetResultButton setLoading={setLoading} getResult={getResult} />
+            <GetResultButton loading={loading} setLoading={setLoading} getResult={getResult} />
             <div className="result">
                 {loading &&
                     <div className="result__loading">Loading...</div>

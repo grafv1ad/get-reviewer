@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
 import ToggleSettingsButton from './ToggleSettingsButton';
@@ -49,6 +49,7 @@ const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
                             name={item.name} 
                             label={item.label} 
                             placeholder={item.placeholder} 
+                            settings={settings}
                             updateSettings={updateSettings}
                         />
                     ))}

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ErrorContext } from '../Error/ErrorContext';
 
 interface GetResultButtonProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
@@ -6,15 +7,24 @@ interface GetResultButtonProps {
 }
 
 const GetResultButton: React.FC<GetResultButtonProps> = ({setLoading, getResult}) => {
+    const {error, setError}: any = useContext(ErrorContext);
+
+    const onClick = async () => {
+        setLoading(true);
+        try {
+            await getResult();
+        } catch(error) {
+            setLoading(false);
+            setError(error);
+        }
+    }
+
     return (
         <button 
             className="get-result-button"
-            onClick={() => {
-                setLoading(true);
-                getResult();
-            }}
+            onClick={onClick}
         >
-            Get reviewers
+            Get reviewer
         </button>
     );
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface ToggleSettingsButtonProps {
+interface SettingsButtonProps {
     visibility: boolean,
     setVisibility: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-const ToggleSettingsButton: React.FC<ToggleSettingsButtonProps> = ({visibility, setVisibility}) => {
+const SettingsButton: React.FC<SettingsButtonProps> = ({visibility, setVisibility}) => {
     let classes = 'py-2 px-4 border transition-all ';
     classes += visibility ? 'text-neutral-600 hover:border-sky-600' : 'border-sky-600 hover:bg-sky-600 hover:text-white'
 
@@ -19,4 +19,4 @@ const ToggleSettingsButton: React.FC<ToggleSettingsButtonProps> = ({visibility, 
     );
 }
 
-export default ToggleSettingsButton;
+export default SettingsButton;

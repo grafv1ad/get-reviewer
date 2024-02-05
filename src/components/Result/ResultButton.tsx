@@ -1,16 +1,16 @@
 import React, { useContext } from 'react';
-import { ErrorContext } from '../Error/ErrorContext';
+import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
 
-interface GetResultButtonProps {
+interface ResultButtonProps {
     loading: boolean,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     getResult: Function,
 }
 
-const GetResultButton: React.FC<GetResultButtonProps> = ({loading, setLoading, getResult}) => {
-    const {setError}: any = useContext(ErrorContext);
+const ResultButton: React.FC<ResultButtonProps> = ({loading, setLoading, getResult}) => {
+    const {setError}: IErrorContext = useContext(ErrorContext);
 
-    const onClick = async () => {
+    const resultButtonHandler = async () => {
         setError(null);
         setLoading(true);
         try {
@@ -24,7 +24,7 @@ const GetResultButton: React.FC<GetResultButtonProps> = ({loading, setLoading, g
     return (
         <button 
             className="py-2 px-4 border border-sky-600 transition-all hover:bg-sky-600 hover:text-white disabled:opacity-50 disabled:bg-sky-600 disabled:text-white"
-            onClick={onClick}
+            onClick={resultButtonHandler}
             disabled={loading}
         >
             Get reviewer
@@ -32,4 +32,4 @@ const GetResultButton: React.FC<GetResultButtonProps> = ({loading, setLoading, g
     );
 }
 
-export default GetResultButton;
+export default ResultButton;

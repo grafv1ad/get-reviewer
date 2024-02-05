@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import ISettings from './SettingsInterface';
 import { localStorageGetItem } from '../LocalStorage/LocalStorageContext';
+import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
 
 interface SettingsItemProps {
     name: string,
@@ -12,6 +13,8 @@ interface SettingsItemProps {
 
 const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder, settings, updateSettings}) => {
     const value = localStorageGetItem(name) || settings[name];
+    const {setError}: IErrorContext = useContext(ErrorContext);
+
     useEffect(() => {
         updateSettings(name, value)
     }, []);
@@ -25,7 +28,10 @@ const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder, se
                 value={value}
                 placeholder={placeholder}
                 className="py-2 px-4 border" 
-                onChange={(event) => updateSettings(name, event.target.value)}
+                onChange={(event) => {
+                    setError(null);
+                    updateSettings(name, event.target.value);
+                }}
             />
         </div>
     );

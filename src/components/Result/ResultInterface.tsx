@@ -1,6 +1,6 @@
 export default interface IResultItem {
-    avatar_url?: string | undefined,
-    html_url?: string | undefined,
-    login?: string | undefined,
+    avatar_url: string,
+    html_url: string,
+    login: string,
     [key: string]: unknown,
 }

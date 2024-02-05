@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
-import ToggleSettingsButton from './ToggleSettingsButton';
-import { ErrorContext } from '../Error/ErrorContext';
+import SettingsButton from './SettingsButton';
 import { localStorageSetItem } from '../LocalStorage/LocalStorageContext';
 
 const settingsList = [
@@ -30,10 +29,8 @@ interface SettingsProps {
 
 const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     const [visibility, setVisibility] = useState(true);
-    const { setError }: any = useContext(ErrorContext);
 
     const updateSettings = (name: string, value: string) => {
-        setError(null);
         localStorageSetItem(name, value);
         setSettings(settings => {
             return {
@@ -59,7 +56,7 @@ const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
                     ))}
                 </div>
             }   
-            <ToggleSettingsButton visibility={visibility} setVisibility={setVisibility} />
+            <SettingsButton visibility={visibility} setVisibility={setVisibility} />
         </div>
     );
 }

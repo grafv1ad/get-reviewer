@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ISettings from './components/Settings/SettingsInterface';
 import Settings from './components/Settings/Settings';
 import Result from './components/Result/Result';

@@ -2,9 +2,9 @@ import React, { useState, useContext } from 'react';
 import ISettings from '../Settings/SettingsInterface';
 import IResultItem from './ResultInterface';
 import ResultItem from './ResultItem';
-import GetResultButton from './GetResultButton';
+import ResultButton from './ResultButton';
 import octokit from '../Octokit/Octokit';
-import { ErrorContext } from '../Error/ErrorContext';
+import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
 
 interface ResultProps {
     settings: ISettings,
@@ -20,7 +20,7 @@ interface IResultState {
 const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<IResultState | null>(null);
-    const { setError }: any = useContext(ErrorContext);
+    const {setError}: IErrorContext = useContext(ErrorContext);
 
     const updateResult = (currentUser: IResultItem | null, reviewer: IResultItem | null, contributors: IResultItem[]) => {
         setError(null);
@@ -84,45 +84,36 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
         }
 
         let currentUser: IResultItem | null = null; 
+        
         try {
-            const user = await getData(`/users/{username}`, {
+            const data = await getData(`/users/{username}`, {
                 username: settings.login,
-                per_page: 1,
             });
-
-            if (user && user[0]) {
-                currentUser = user[0];
-            }
+            currentUser = data[0];
         } catch (error) {
             console.debug(error);
-        }
-
-        if (!currentUser) {
             throw new Error('Сannot find the user, please try again');
         }
 
-        let data: IResultItem[] = [];
+        let contributors: IResultItem[] = [];
+
         try {
-            data = await getData('/repos/{owner}/{repo}/contributors', {
+            contributors = await getData('/repos/{owner}/{repo}/contributors', {
                 owner: settings.login,
                 repo: settings.repo,
                 per_page: 100,
             });
         } catch (error) {
             console.debug(error);
-            setLoading(false);
             throw new Error('Сannot find the repository, please try again');
         } 
-
-        let contributors: IResultItem[] = data;
-        let reviewer: IResultItem | null = null;
+        
         const blacklist = (settings.blacklist.length > 0) ? settings.blacklist.split(/\s*,\s*/) : [];
+        blacklist.push(currentUser.login);
 
-        contributors = contributors.filter(item => {
-            if (!item.login) return false;
-            if (item.login === currentUser!.login) return false;
-            return !blacklist.includes(item.login);
-        });
+        contributors = contributors.filter(item => !blacklist.includes(item.login));
+
+        let reviewer: IResultItem | null = null;
 
         if (contributors.length > 0) {
             const randomIndex = Math.floor(Math.random() * contributors.length);
@@ -142,7 +133,7 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
 
     return (
         <>
-            <GetResultButton loading={loading} setLoading={setLoading} getResult={getResult} />
+            <ResultButton loading={loading} setLoading={setLoading} getResult={getResult} />
             <div className="flex flex-col gap-4 text-lg empty:hidden">
                 {loading &&
                     <div className="text-neutral-600">Loading...</div>
@@ -150,7 +141,7 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
                 {!loading && result &&
                     <>
                         <div className="result__item">
-                            <div className="text-lg text-sky-800 mb-2">You</div>
+                            <div className="text-lg text-sky-800 mb-2">Current user</div>
                             {result.currentUser &&
                                 <ul className="flex flex-col gap-4">
                                     <ResultItem data={result.currentUser} />
@@ -158,14 +149,14 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
                             }
                         </div>
                         <div className="result__item">
-                            <div className="text-lg text-sky-800 mb-2">Your reviewer</div>
+                            <div className="text-lg text-sky-800 mb-2">Reviewer</div>
                             {result.reviewer &&
                                 <ul className="flex flex-col gap-4">
                                     <ResultItem data={result.reviewer} />
                                 </ul>
                             }
                             {!result.reviewer &&
-                                <div className="result__error">No contributor found, please try to change the blacklist</div>
+                                <div className="result__error">No contributors found{settings.blacklist.length > 0 && ', please try to change the blacklist'}</div>
                             }
                         </div>
                         {contributorsList && 

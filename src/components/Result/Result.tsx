@@ -17,23 +17,17 @@ interface IResultState {
     contributors: IResultItem[],
 }
 
+interface IGetDataOptions {
+    owner?: string,
+    repo?: string,
+    username?: string,
+    per_page?: number,
+}
+
 const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<IResultState | null>(null);
     const {setError}: IErrorContext = useContext(ErrorContext);
-
-    const updateResult = (currentUser: IResultItem | null, reviewer: IResultItem | null, contributors: IResultItem[]) => {
-        setError(null);
-        setResult({currentUser, reviewer, contributors});
-        setLoading(false);
-    }
-
-    interface IGetDataOptions {
-        owner?: string,
-        repo?: string,
-        username?: string,
-        per_page?: number,
-    }
 
     const getData = async (url: string, options: IGetDataOptions) => {
         const nextPattern = /(?<=<)([\S]*)(?=>; rel="Next")/i;
@@ -121,7 +115,23 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
             contributors.splice(randomIndex, 1);
         }
         
-        updateResult(currentUser, reviewer, contributors);
+        return {currentUser, reviewer, contributors};
+    }
+    
+    const updateResult = async () => {
+        let result = null;
+        try {
+            result = await getResult();
+        } catch(error) {
+            console.debug(error);
+            setLoading(false);
+            setError(error);
+            return;
+        }
+
+        setError(null);
+        setResult(result);
+        setLoading(false);
     }
 
     let contributorsList;
@@ -133,7 +143,7 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
 
     return (
         <>
-            <ResultButton loading={loading} setLoading={setLoading} getResult={getResult} />
+            <ResultButton loading={loading} setLoading={setLoading} updateResult={updateResult} />
             <div className="flex flex-col gap-4 text-lg empty:hidden">
                 {loading &&
                     <div className="text-neutral-600">Loading...</div>

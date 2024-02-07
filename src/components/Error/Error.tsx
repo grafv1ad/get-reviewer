@@ -4,14 +4,14 @@ import { ErrorContext } from './ErrorContext';
 const Error = () => {
     const {error}: any = useContext(ErrorContext);
 
+    if (!error) {
+        return null;
+    }
+
     return (
-        <>
-            {error?.name &&
-                <div className="text-red-800 font-semibold text-lg">
-                    {error.message || 'Unknown error, please try again'}
-                </div>
-            }
-        </>
+        <div className="text-red-800 font-semibold text-lg">
+            {error.message || 'Unknown error, please try again'}
+        </div>
     );
 }
 

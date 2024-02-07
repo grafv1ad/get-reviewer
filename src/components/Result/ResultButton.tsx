@@ -4,21 +4,16 @@ import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
 interface ResultButtonProps {
     loading: boolean,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    getResult: Function,
+    updateResult: Function,
 }
 
-const ResultButton: React.FC<ResultButtonProps> = ({loading, setLoading, getResult}) => {
+const ResultButton: React.FC<ResultButtonProps> = ({loading, setLoading, updateResult}) => {
     const {setError}: IErrorContext = useContext(ErrorContext);
 
     const resultButtonHandler = async () => {
         setError(null);
         setLoading(true);
-        try {
-            await getResult();
-        } catch(error) {
-            setLoading(false);
-            setError(error);
-        }
+        updateResult();
     }
 
     return (

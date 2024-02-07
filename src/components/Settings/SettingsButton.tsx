@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 interface SettingsButtonProps {
     visibility: boolean,
@@ -6,8 +7,13 @@ interface SettingsButtonProps {
 }
 
 const SettingsButton: React.FC<SettingsButtonProps> = ({visibility, setVisibility}) => {
-    let classes = 'py-2 px-4 border transition-all ';
-    classes += visibility ? 'text-neutral-600 hover:border-sky-600' : 'border-sky-600 hover:bg-sky-600 hover:text-white'
+    const classes = classNames('py-2 px-4 border transition-all', {
+        'text-neutral-600': visibility,
+        'hover:border-sky-600': visibility,
+        'border-sky-600': !visibility,
+        'hover:bg-sky-600': !visibility,
+        'hover:text-white': !visibility,
+    });
 
     return (
         <button 

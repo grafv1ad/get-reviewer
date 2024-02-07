@@ -1,6 +1,6 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ISettings from './SettingsInterface';
-import { localStorageGetItem } from '../LocalStorage/LocalStorageContext';
+import { localStorageGetItem } from '../../helpers/LocalStorage/LocalStorage';
 import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
 
 interface SettingsItemProps {
@@ -12,11 +12,13 @@ interface SettingsItemProps {
 }
 
 const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder, settings, updateSettings}) => {
-    const value = localStorageGetItem(name) || settings[name];
+    const [value, setValue] = useState<string>('');
     const {setError}: IErrorContext = useContext(ErrorContext);
 
     useEffect(() => {
-        updateSettings(name, value)
+        const newValue = localStorageGetItem(name) || settings[name];
+        setValue(newValue);
+        updateSettings(name, newValue)
     }, []);
 
     return (
@@ -30,6 +32,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({name, label, placeholder, se
                 className="py-2 px-4 border" 
                 onChange={(event) => {
                     setError(null);
+                    setValue(event.target.value);
                     updateSettings(name, event.target.value);
                 }}
             />

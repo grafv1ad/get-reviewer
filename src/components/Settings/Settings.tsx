@@ -2,7 +2,12 @@ import React, { useState, useContext } from 'react';
 import ISettings from './SettingsInterface';
 import SettingsItem from './SettingsItem';
 import SettingsButton from './SettingsButton';
-import { localStorageSetItem } from '../LocalStorage/LocalStorageContext';
+import { localStorageSetItem } from '../../helpers/LocalStorage/LocalStorage';
+
+interface SettingsProps {
+    settings: ISettings,
+    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
+}
 
 const settingsList = [
     {
@@ -21,11 +26,6 @@ const settingsList = [
         placeholder: 'Enter user logins separated by commas',
     },
 ];
-
-interface SettingsProps {
-    settings: ISettings,
-    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
-}
 
 const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
     const [visibility, setVisibility] = useState(true);

@@ -1,15 +1,12 @@
-import React, { useState, useContext } from 'react';
-import ISettings from '../Settings/SettingsInterface';
+import { useState, useContext } from 'react';
 import IResultItem from './ResultInterface';
+import ISettings from '../Settings/SettingsInterface';
 import ResultItem from './ResultItem';
 import ResultButton from './ResultButton';
-import octokit from '../Octokit/Octokit';
+import octokit from '../../api/octokit/octokit';
 import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
-
-interface ResultProps {
-    settings: ISettings,
-    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
-}
+import { useSelector, useDispatch } from 'react-redux';
+import { changeSettingsItem } from '../../store';
 
 interface IResultState {
     currentUser: IResultItem | null,
@@ -24,7 +21,14 @@ interface IGetDataOptions {
     per_page?: number,
 }
 
-const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
+const Result = () => {
+    const settings: ISettings = {
+        login: useSelector((state: ISettings) => state.login),
+        repo: useSelector((state: ISettings) => state.repo),
+        blacklist: useSelector((state: ISettings) => state.blacklist),
+    };
+    const dispatch = useDispatch();
+
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<IResultState | null>(null);
     const {setError}: IErrorContext = useContext(ErrorContext);
@@ -62,12 +66,12 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
 
     const getResult = async () => {
         setResult(null);
-
-        setSettings({
-            login: settings.login.trim(),
-            repo: settings.repo.trim(),
-            blacklist: settings.blacklist.trim(),
-        });
+        
+        for (const name in settings) {
+            const value = settings[name].trim();
+            settings[name] = value;
+            dispatch(changeSettingsItem(name, value));
+        }
 
         if (!settings.login) {
             throw new Error('Enter login, please');

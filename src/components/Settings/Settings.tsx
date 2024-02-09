@@ -1,13 +1,6 @@
-import React, { useState, useContext } from 'react';
-import ISettings from './SettingsInterface';
+import { useState } from 'react';
 import SettingsItem from './SettingsItem';
 import SettingsButton from './SettingsButton';
-import { localStorageSetItem } from '../../helpers/LocalStorage/LocalStorage';
-
-interface SettingsProps {
-    settings: ISettings,
-    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
-}
 
 const settingsList = [
     {
@@ -27,18 +20,8 @@ const settingsList = [
     },
 ];
 
-const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
+const Settings = () => {
     const [visibility, setVisibility] = useState(true);
-
-    const updateSettings = (name: string, value: string) => {
-        localStorageSetItem(name, value);
-        setSettings(settings => {
-            return {
-                ...settings, 
-                [name]: value,
-            } 
-        });
-    }
 
     return (
         <div className="settings">
@@ -50,8 +33,6 @@ const Settings: React.FC<SettingsProps> = ({settings, setSettings}) => {
                             name={item.name} 
                             label={item.label} 
                             placeholder={item.placeholder} 
-                            settings={settings}
-                            updateSettings={updateSettings}
                         />
                     ))}
                 </div>

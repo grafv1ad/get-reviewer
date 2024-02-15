@@ -3,7 +3,7 @@ import IResultItem from './ResultInterface';
 import ISettings from '../Settings/SettingsInterface';
 import ResultItem from './ResultItem';
 import ResultButton from './ResultButton';
-import octokit from '../../api/octokit/octokit';
+import octokit from '../../shared/api/octokit/octokit';
 import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeSettingsItem } from '../../store';
@@ -148,35 +148,35 @@ const Result = () => {
     return (
         <>
             <ResultButton loading={loading} setLoading={setLoading} updateResult={updateResult} />
-            <div className="flex flex-col gap-4 text-lg empty:hidden">
+            <div className='flex flex-col gap-4 text-lg empty:hidden'>
                 {loading &&
-                    <div className="text-neutral-600">Loading...</div>
+                    <div className='text-neutral-600'>Loading...</div>
                 }
                 {!loading && result &&
                     <>
-                        <div className="result__item">
-                            <div className="text-lg text-sky-800 mb-2">Current user</div>
+                        <div className='result__item'>
+                            <div className='text-lg text-sky-800 mb-2'>Current user</div>
                             {result.currentUser &&
-                                <ul className="flex flex-col gap-4">
+                                <ul className='flex flex-col gap-4'>
                                     <ResultItem data={result.currentUser} />
                                 </ul>
                             }
                         </div>
-                        <div className="result__item">
-                            <div className="text-lg text-sky-800 mb-2">Reviewer</div>
+                        <div className='result__item'>
+                            <div className='text-lg text-sky-800 mb-2'>Reviewer</div>
                             {result.reviewer &&
-                                <ul className="flex flex-col gap-4">
+                                <ul className='flex flex-col gap-4'>
                                     <ResultItem data={result.reviewer} />
                                 </ul>
                             }
                             {!result.reviewer &&
-                                <div className="result__error">No contributors found{settings.blacklist.length > 0 && ', please try to change the blacklist'}</div>
+                                <div className='result__error'>No contributors found{settings.blacklist.length > 0 && ', please try to change the blacklist'}</div>
                             }
                         </div>
                         {contributorsList && 
-                            <div className="result__item">
-                                <div className="text-lg text-sky-800 mb-2">Other contributors <i className="text-sm">(except for the blacklist)</i></div>
-                                <ul className="flex flex-col gap-4">
+                            <div className='result__item'>
+                                <div className='text-lg text-sky-800 mb-2'>Other contributors <i className='text-sm'>(except for the blacklist)</i></div>
+                                <ul className='flex flex-col gap-4'>
                                     {contributorsList}
                                 </ul>
                             </div>

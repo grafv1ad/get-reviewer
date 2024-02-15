@@ -24,9 +24,9 @@ const Settings = () => {
     const [visibility, setVisibility] = useState(true);
 
     return (
-        <div className="settings">
+        <div className='settings'>
             {visibility &&
-                <div className="flex flex-col gap-3 mb-4">
+                <div className='flex flex-col gap-3 mb-4'>
                     {settingsList.map((item) => (
                         <SettingsItem 
                             key={item.name} 

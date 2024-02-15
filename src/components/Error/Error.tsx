@@ -9,7 +9,7 @@ const Error = () => {
     }
 
     return (
-        <div className="text-red-800 font-semibold text-lg">
+        <div className='text-red-800 font-semibold text-lg'>
             {error.message || 'Unknown error, please try again'}
         </div>
     );

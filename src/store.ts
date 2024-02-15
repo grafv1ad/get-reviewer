@@ -1,5 +1,5 @@
 import { createStore } from 'redux';
-import { localStorageGetItem } from './helpers/LocalStorage/LocalStorage';
+import { localStorageGetItem } from './shared/helpers/localstorage/localstorage';
 import ISettings from './components/Settings/SettingsInterface';
 
 interface ISettingsReducerAction {

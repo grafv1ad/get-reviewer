@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "get-reviewer",
+  "version": "1.0.0",
   "private": true,
   "author": "Vladislav Petrov <hello@vladpetrov.me>",
   "homepage": "https://grafv1ad.github.io/get-reviewer/",

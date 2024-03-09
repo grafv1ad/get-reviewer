@@ -13,9 +13,6 @@ export const localStorageSetItem = (name: string, value: string) => {
         window.localStorage.setItem(name, value);
     } catch (error) {
         console.debug(error);
-        // Сносим, так как функция универсальная и не предусматривает
-        // Попытку восстановить данные
-        window.localStorage.removeItem(name);
     }
 }
 

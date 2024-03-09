@@ -1,15 +1,12 @@
-import React, { useState, useContext } from 'react';
-import ISettings from '../Settings/SettingsInterface';
+import { useState, useContext } from 'react';
 import IResultItem from './ResultInterface';
+import ISettings from '../Settings/SettingsInterface';
 import ResultItem from './ResultItem';
 import ResultButton from './ResultButton';
-import octokit from '../Octokit/Octokit';
+import octokit from '../../shared/api/octokit/octokit';
 import { IErrorContext, ErrorContext } from '../Error/ErrorContext';
-
-interface ResultProps {
-    settings: ISettings,
-    setSettings: React.Dispatch<React.SetStateAction<ISettings>>,
-}
+import { useSelector, useDispatch } from 'react-redux';
+import { changeSettingsItem } from '../../store';
 
 interface IResultState {
     currentUser: IResultItem | null,
@@ -24,7 +21,14 @@ interface IGetDataOptions {
     per_page?: number,
 }
 
-const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
+const Result = () => {
+    const settings: ISettings = {
+        login: useSelector((state: ISettings) => state.login),
+        repo: useSelector((state: ISettings) => state.repo),
+        blacklist: useSelector((state: ISettings) => state.blacklist),
+    };
+    const dispatch = useDispatch();
+
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<IResultState | null>(null);
     const {setError}: IErrorContext = useContext(ErrorContext);
@@ -62,12 +66,12 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
 
     const getResult = async () => {
         setResult(null);
-
-        setSettings({
-            login: settings.login.trim(),
-            repo: settings.repo.trim(),
-            blacklist: settings.blacklist.trim(),
-        });
+        
+        for (const name in settings) {
+            const value = settings[name].trim();
+            settings[name] = value;
+            dispatch(changeSettingsItem(name, value));
+        }
 
         if (!settings.login) {
             throw new Error('Enter login, please');
@@ -144,35 +148,35 @@ const Result: React.FC<ResultProps> = ({ settings, setSettings }) => {
     return (
         <>
             <ResultButton loading={loading} setLoading={setLoading} updateResult={updateResult} />
-            <div className="flex flex-col gap-4 text-lg empty:hidden">
+            <div className='flex flex-col gap-4 text-lg empty:hidden'>
                 {loading &&
-                    <div className="text-neutral-600">Loading...</div>
+                    <div className='text-neutral-600'>Loading...</div>
                 }
                 {!loading && result &&
                     <>
-                        <div className="result__item">
-                            <div className="text-lg text-sky-800 mb-2">Current user</div>
+                        <div className='result__item'>
+                            <div className='text-lg text-sky-800 mb-2'>Current user</div>
                             {result.currentUser &&
-                                <ul className="flex flex-col gap-4">
+                                <ul className='flex flex-col gap-4'>
                                     <ResultItem data={result.currentUser} />
                                 </ul>
                             }
                         </div>
-                        <div className="result__item">
-                            <div className="text-lg text-sky-800 mb-2">Reviewer</div>
+                        <div className='result__item'>
+                            <div className='text-lg text-sky-800 mb-2'>Reviewer</div>
                             {result.reviewer &&
-                                <ul className="flex flex-col gap-4">
+                                <ul className='flex flex-col gap-4'>
                                     <ResultItem data={result.reviewer} />
                                 </ul>
                             }
                             {!result.reviewer &&
-                                <div className="result__error">No contributors found{settings.blacklist.length > 0 && ', please try to change the blacklist'}</div>
+                                <div className='result__error'>No contributors found{settings.blacklist.length > 0 && ', please try to change the blacklist'}</div>
                             }
                         </div>
                         {contributorsList && 
-                            <div className="result__item">
-                                <div className="text-lg text-sky-800 mb-2">Other contributors <i className="text-sm">(except for the blacklist)</i></div>
-                                <ul className="flex flex-col gap-4">
+                            <div className='result__item'>
+                                <div className='text-lg text-sky-800 mb-2'>Other contributors <i className='text-sm'>(except for the blacklist)</i></div>
+                                <ul className='flex flex-col gap-4'>
                                     {contributorsList}
                                 </ul>
                             </div>
